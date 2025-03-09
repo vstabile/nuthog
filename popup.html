@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NutHog</title>
+    <meta charset="UTF-8" />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        width: 350px;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f7f2;
+        color: #4a4a4a;
+        min-height: 500px;
+        position: relative;
+        overflow: hidden; /* Prevent body scrolling */
+      }
+
+      .header {
+        background-color: #8b5a2b;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        border-bottom: 4px solid #5d3c1c;
+        position: relative;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+      }
+
+      .logo img {
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+      }
+
+      .logo h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .tagline {
+        font-size: 12px;
+        opacity: 0.9;
+      }
+
+      .settings-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 5px;
+      }
+
+      .settings-btn:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+      }
+
+      .back-btn {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 5px;
+        display: none;
+      }
+
+      .back-btn:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+      }
+
+      .stats-container {
+        display: flex;
+        justify-content: space-around;
+        padding: 15px;
+        background-color: #fff;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .stat-box {
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #8b5a2b;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: #777;
+      }
+
+      .wallet-info {
+        padding: 10px 15px;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .wallet-status {
+        font-size: 14px;
+        padding: 4px 8px;
+        border-radius: 4px;
+      }
+
+      .wallet-ready {
+        background-color: #e6f7e6;
+        color: #2e7d32;
+      }
+
+      .wallet-missing {
+        background-color: #ffebee;
+        color: #c62828;
+      }
+
+      .clear-history-btn {
+        background-color: #8b5a2b;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .clear-history-btn:hover {
+        background-color: #6d4621;
+      }
+
+      .history-container {
+        padding: 15px;
+        flex: 1; /* Allow this to grow */
+        display: flex;
+        flex-direction: column;
+      }
+
+      .history-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #5d3c1c;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .token-history {
+        max-height: 200px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex: 1;
+      }
+
+      .token-item {
+        background-color: white;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        padding: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        border-left: 4px solid #ccc;
+      }
+
+      .token-item.claimed {
+        border-left-color: #4caf50;
+      }
+
+      .token-item.unclaimed {
+        border-left-color: #ff9800;
+      }
+
+      .token-content {
+        flex: 1;
+      }
+
+      .token-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+      }
+
+      .token-emoji {
+        font-size: 18px;
+      }
+
+      .token-type {
+        font-weight: bold;
+        color: #8b5a2b;
+      }
+
+      .token-value {
+        font-weight: bold;
+        color: #4caf50;
+      }
+
+      .token-details {
+        font-size: 12px;
+        color: #777;
+      }
+
+      .token-date {
+        margin-bottom: 2px;
+      }
+
+      .token-url {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .token-status {
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
+      }
+
+      .status-icon {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 12px;
+      }
+
+      .status-icon.claimed {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      .status-icon.unclaimed {
+        background-color: #ff9800;
+        color: white;
+      }
+
+      .empty-history {
+        text-align: center;
+        padding: 20px;
+        color: #777;
+        font-style: italic;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 10px;
+        font-size: 12px;
+        color: #777;
+        border-top: 1px solid #e0e0e0;
+        margin-top: auto; /* Push to bottom of flex container */
+      }
+
+      /* Settings Panel Styles */
+      .main-view,
+      .settings-view {
+        transition: transform 0.3s ease-in-out;
+        min-height: 500px;
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        overflow-y: auto;
+        max-height: 600px; /* Set a reasonable max height */
+      }
+
+      .main-view {
+        position: relative;
+        z-index: 1;
+        background-color: #f9f7f2;
+      }
+
+      .settings-view {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #f9f7f2;
+        transform: translateX(100%);
+        z-index: 2;
+        overflow-y: hidden; /* Disable outer scrolling */
+      }
+
+      .settings-view.active {
+        transform: translateX(0);
+      }
+
+      .main-view.hidden {
+        transform: translateX(-100%);
+      }
+
+      .settings-content {
+        overflow-y: auto;
+        flex: 1;
+        padding-bottom: 20px; /* Add some padding at the bottom */
+      }
+
+      .section {
+        margin: 15px;
+        padding: 12px;
+        background-color: #fff;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .section-title {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #5d3c1c;
+      }
+
+      .form-group {
+        margin-bottom: 12px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 4px;
+        font-weight: bold;
+        font-size: 13px;
+      }
+
+      input[type="text"],
+      input[type="url"],
+      textarea {
+        width: 100%;
+        padding: 6px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 13px;
+      }
+
+      textarea {
+        min-height: 60px;
+        resize: vertical;
+      }
+
+      .seed-display {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px;
+        margin-top: 8px;
+        word-wrap: break-word;
+        font-family: monospace;
+        min-height: 40px;
+        font-size: 12px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+      }
+
+      button {
+        background-color: #8b5a2b;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+
+      button:hover {
+        background-color: #6d4621;
+      }
+
+      button.secondary {
+        background-color: #f1f1f1;
+        color: #333;
+        border: 1px solid #ddd;
+      }
+
+      button.secondary:hover {
+        background-color: #e4e4e4;
+      }
+
+      .warning {
+        color: #856404;
+        background-color: #fff3cd;
+        padding: 8px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        font-size: 12px;
+      }
+
+      .toggle-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+        margin-right: 8px;
+      }
+
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.3s;
+        border-radius: 20px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: #8b5a2b;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(20px);
+      }
+
+      .toggle-label {
+        font-size: 13px;
+      }
+
+      .status {
+        margin: 10px 15px;
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 13px;
+      }
+
+      .status.success {
+        background-color: #d4edda;
+        color: #155724;
+      }
+
+      .status.error {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+
+      .status.warning {
+        background-color: #fff3cd;
+        color: #856404;
+      }
+
+      #save-settings-btn {
+        width: calc(100% - 30px);
+        margin: 15px;
+        padding: 8px;
+        font-weight: bold;
+      }
+
+      .info-box {
+        background-color: #e8f4fd;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 12px;
+        font-size: 13px;
+        color: #0c5460;
+        border-left: 4px solid #17a2b8;
+      }
+
+      .info-box p {
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .proofs-container {
+        padding: 15px;
+        border-top: 1px solid #e0e0e0;
+        flex: 1; /* Allow this to grow */
+        display: flex;
+        flex-direction: column;
+      }
+
+      .proofs-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #5d3c1c;
+      }
+
+      .mint-proofs {
+        max-height: 150px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex: 1;
+      }
+
+      .mint-item {
+        background-color: white;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        padding: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .mint-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #8b5a2b;
+      }
+
+      .mint-value {
+        font-weight: bold;
+        color: #4caf50;
+      }
+
+      .mint-url {
+        font-size: 12px;
+        color: #777;
+        word-break: break-all;
+        margin-bottom: 5px;
+      }
+
+      .proof-count {
+        font-size: 13px;
+        color: #555;
+      }
+
+      .send-all-btn {
+        background-color: #8b5a2b;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        margin-top: 8px;
+        width: 100%;
+      }
+
+      .send-all-btn:hover {
+        background-color: #6d4621;
+      }
+
+      /* Modal styles */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal.active {
+        display: flex;
+      }
+
+      /* When using style.display = "block", we need to adjust the layout */
+      .modal[style*="display: block"] {
+        display: flex !important;
+      }
+
+      .modal-content {
+        background-color: #fff;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 320px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        position: relative;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+        cursor: pointer;
+        color: #777;
+      }
+
+      .modal-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #8b5a2b;
+        text-align: center;
+      }
+
+      .qr-code-container {
+        text-align: center;
+        margin-bottom: 15px;
+      }
+
+      .token-text-container {
+        margin-bottom: 15px;
+      }
+
+      .token-text {
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px;
+        font-family: monospace;
+        font-size: 12px;
+        word-break: break-all;
+        max-height: 100px;
+        overflow-y: auto;
+      }
+
+      .copy-btn {
+        background-color: #8b5a2b;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .copy-btn:hover {
+        background-color: #6d4621;
+      }
+
+      .copy-icon {
+        margin-right: 5px;
+      }
+
+      .token-info {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 14px;
+      }
+
+      .token-amount {
+        font-weight: bold;
+        color: #4caf50;
+      }
+
+      .loading-proofs {
+        text-align: center;
+        padding: 15px;
+        color: #777;
+        font-style: italic;
+      }
+
+      .no-proofs {
+        text-align: center;
+        padding: 15px;
+        color: #777;
+        font-style: italic;
+      }
+
+      /* Ensure content doesn't cause unnecessary scrolling */
+      .main-view > div:not(.header):not(.footer) {
+        flex-shrink: 0;
+      }
+
+      /* Spinner styles */
+      .spinner-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #8b5a2b;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 15px;
+      }
+
+      .spinner-text {
+        color: #8b5a2b;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .view-toggle-buttons {
+        margin-top: 4px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .view-toggle-btn {
+        background-color: #f1f1f1;
+        color: #555;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .view-toggle-btn.active {
+        background-color: #8b5a2b;
+        color: white;
+      }
+
+      .spent-tokens {
+        max-height: 150px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex: 1;
+      }
+
+      .spent-token-item {
+        background-color: white;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        padding: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .spent-token-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #8b5a2b;
+      }
+
+      .spent-token-amount {
+        font-weight: bold;
+        color: #4caf50;
+      }
+
+      .spent-token-date {
+        font-size: 12px;
+        color: #777;
+        margin-bottom: 5px;
+      }
+
+      .spent-token-mint {
+        font-size: 12px;
+        color: #777;
+        word-break: break-all;
+        margin-bottom: 8px;
+      }
+
+      .spent-token-text {
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 6px;
+        font-family: monospace;
+        font-size: 11px;
+        word-break: break-all;
+        max-height: 60px;
+        overflow-y: auto;
+        margin-bottom: 8px;
+      }
+
+      .copy-spent-btn {
+        background-color: #8b5a2b;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .copy-spent-btn:hover {
+        background-color: #6d4621;
+      }
+
+      .no-spent-tokens {
+        text-align: center;
+        padding: 15px;
+        color: #777;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Main View -->
+    <div class="main-view">
+      <div class="header">
+        <button id="settings-btn" class="settings-btn">⚙️</button>
+        <div class="logo">
+          <img src="icons/icon48.png" alt="NutHog Logo" />
+          <h1>NutHog</h1>
+        </div>
+        <div class="tagline">Sniffing out Cashu nuts across the web!</div>
+      </div>
+
+      <div class="stats-container">
+        <div class="stat-box">
+          <div class="stat-value" id="found-count">0</div>
+          <div class="stat-label">Found</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="claimed-count">0</div>
+          <div class="stat-label">Claimed</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="total-value">0</div>
+          <div class="stat-label">Total Sats</div>
+        </div>
+      </div>
+
+      <div class="wallet-info">
+        <div id="wallet-status" class="wallet-status">Checking wallet...</div>
+      </div>
+
+      <div class="history-container">
+        <div class="history-title">
+          <span>Recent Discoveries</span>
+          <button id="clear-history-btn" class="clear-history-btn">
+            Clear History
+          </button>
+        </div>
+        <div id="token-history" class="token-history">
+          <!-- Token history will be populated here -->
+        </div>
+      </div>
+
+      <div class="proofs-container">
+        <div class="proofs-title">
+          <span id="proofs-title-text">Stored Proofs by Mint</span>
+          <div class="view-toggle-buttons">
+            <button id="view-proofs-btn" class="view-toggle-btn active">
+              Stored Proofs
+            </button>
+            <button id="view-spent-btn" class="view-toggle-btn">
+              Spent Tokens
+            </button>
+          </div>
+        </div>
+        <div id="mint-proofs" class="mint-proofs">
+          <!-- Mint proofs will be populated here -->
+          <div class="loading-proofs">Loading proofs...</div>
+        </div>
+        <div id="spent-tokens" class="spent-tokens hidden">
+          <!-- Spent tokens will be populated here -->
+          <div class="loading-proofs">Loading spent tokens...</div>
+        </div>
+      </div>
+
+      <div class="footer">NutHog v1.0.0 - The Cashu Token Hunter</div>
+    </div>
+
+    <!-- Settings View -->
+    <div class="settings-view">
+      <div class="header">
+        <button id="back-btn" class="back-btn">←</button>
+        <div class="logo">
+          <img src="icons/icon48.png" alt="NutHog Logo" />
+          <h1>Settings</h1>
+        </div>
+      </div>
+
+      <div class="settings-content">
+        <div class="section">
+          <div class="section-title">Mint Settings</div>
+          <div class="form-group">
+            <label for="mint-url">Mint URL</label>
+            <input
+              type="url"
+              id="mint-url"
+              placeholder="https://mint.refugio.com.br"
+            />
+          </div>
+          <div class="info-box">
+            <p>
+              NutHog stores received Cashu proofs locally in your browser. These
+              proofs represent your ecash value.
+            </p>
+          </div>
+          <div class="toggle-container">
+            <label class="toggle-switch">
+              <input type="checkbox" id="notifications" />
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Show notifications</span>
+          </div>
+          <div class="toggle-container">
+            <label class="toggle-switch">
+              <input type="checkbox" id="toast-notifications" />
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Use in-page toast notifications</span>
+          </div>
+          <div class="toggle-container">
+            <label class="toggle-switch">
+              <input type="checkbox" id="play-sounds" />
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label"
+              >Play sniffing sound with notifications</span
+            >
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Wallet Seed Phrase</div>
+          <div class="warning">
+            <strong>Warning:</strong> Your seed phrase is the key to your
+            wallet. Never share it with anyone.
+          </div>
+
+          <div id="seed-section">
+            <div class="buttons">
+              <button id="show-seed">Show Seed Phrase</button>
+              <button id="generate-seed" class="secondary">
+                Generate New Seed
+              </button>
+            </div>
+            <div id="seed-display" class="seed-display hidden"></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Restore Wallet</div>
+          <div class="form-group">
+            <label for="restore-seed">Enter Seed Phrase</label>
+            <textarea
+              id="restore-seed"
+              placeholder="Enter your 12 or 24 word seed phrase separated by spaces"
+            ></textarea>
+          </div>
+          <div class="buttons">
+            <button id="restore-wallet">Restore Wallet</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Debug Options</div>
+          <div class="toggle-container">
+            <label class="toggle-switch">
+              <input type="checkbox" id="debug-mode" />
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Debug Mode</span>
+          </div>
+        </div>
+
+        <button id="save-settings-btn">Save Settings</button>
+
+        <div id="status-message" class="status hidden"></div>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+
+    <!-- QR Code Modal -->
+    <div id="token-modal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <div class="modal-title">Cashu Token</div>
+        <div class="qr-code-container" id="qr-code"></div>
+        <div class="token-text-container">
+          <div class="token-text" id="token-text"></div>
+          <button class="copy-btn" id="copy-token-btn">
+            <span class="copy-icon">📋</span> Copy Token
+          </button>
+        </div>
+        <div class="token-info">
+          Total amount:
+          <span class="token-amount" id="token-amount">0</span> sats
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="spinner-overlay" class="spinner-overlay" style="display: none">
+      <div class="spinner"></div>
+      <div class="spinner-text" id="spinner-text">Processing...</div>
+    </div>
+  </body>
+</html>

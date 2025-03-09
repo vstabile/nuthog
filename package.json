@@ -1,0 +1,21 @@
+{
+  "name": "nuthog",
+  "version": "1.0.0",
+  "description": "Chrome extension that scans web pages for emojis containing encoded Cashu tokens",
+  "main": "background.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "watch": "webpack --config webpack.config.js --watch"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@cashu/cashu-ts": "^2.2.1",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^11.0.0",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  }
+}
