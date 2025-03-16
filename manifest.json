@@ -3,7 +3,7 @@
   "name": "NutHog",
   "version": "1.0",
   "description": "Sniffs out valuable Cashu nuts hidden in emojis across the web, just like a truffle hog hunts for treasures",
-  "permissions": ["activeTab", "storage", "notifications", "scripting", "tabs"],
+  "permissions": ["storage", "notifications", "tabs"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js",
